@@ -1,15 +1,15 @@
-package org.yurkiss.antlr;
+package org.yurkiss.antlr.expr;
 
 /**
  * Created by yurkiss on 10/12/16.
  */
-public class Value {
+public class ValueOld {
 
-    public static Value VOID = new Value(new Object());
+    public static ValueOld VOID = new ValueOld(new Object());
 
     final Object value;
 
-    public Value(Object value) {
+    public ValueOld(Object value) {
         this.value = value;
     }
 
@@ -50,7 +50,7 @@ public class Value {
             return false;
         }
 
-        Value that = (Value)o;
+        ValueOld that = (ValueOld)o;
 
         return this.value.equals(that.value);
     }

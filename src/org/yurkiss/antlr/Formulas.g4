@@ -1,18 +1,17 @@
 grammar Formulas;
 
-
-expr: expr AMP expr
-    | expr POWER expr
-    | expr op=(MUL|DIV) expr
-    | expr op=(ADD|SUB) expr
-    | expr ( GT | LT | LTEQ | GTEQ ) expr
-    | expr ( EQ | NEQ ) expr
-    | expr ( AND_OP ) expr
-    | expr ( OR_OP) expr
-    | function
-    | qualifiedName
-    | literal
-    | LPAR expr RPAR
+expr: expr AMP expr                         # Concatenation
+    | expr POWER expr                       # Power
+    | expr op=(MUL|DIV) expr                # MulDiv
+    | expr op=(ADD|SUB) expr                # AddSub
+    | expr ( GT | LT | LTEQ | GTEQ ) expr   # Comparison
+    | expr ( EQ | NEQ ) expr                # ComparisonEquals
+    | expr ( AND_OP ) expr                  # ComparisonAnd
+    | expr ( OR_OP) expr                    # ComparisonOR
+    | function                              # FunctionCall
+    | qualifiedName                         # Name
+    | literal                               # Liter
+    | LPAR expr RPAR                        # Parens
 ;
 
 function:
