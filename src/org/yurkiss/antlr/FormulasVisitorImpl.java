@@ -64,9 +64,9 @@ public class FormulasVisitorImpl extends FormulasBaseVisitor<Expression> {
 
     //
 //    @Override
-//    public Expression visitComparison(FormulasParser.ComparisonContext ctx) {
-////        return super.visitComparison(ctx);
-//    }
+    public Expression visitComparison(FormulasParser.ComparisonContext ctx) {
+        return createBinaryOperation(ctx);
+    }
 //
 //    @Override
 //    public Expression visitParens(FormulasParser.ParensContext ctx) {
@@ -103,11 +103,12 @@ public class FormulasVisitorImpl extends FormulasBaseVisitor<Expression> {
 
         return null;
     }
-//
-//    @Override
-//    public Expression visitComparisonEquals(FormulasParser.ComparisonEqualsContext ctx) {
-////        return super.visitComparisonEquals(ctx);
-//    }
+
+    @Override
+    public Expression visitComparisonEquals(FormulasParser.ComparisonEqualsContext ctx) {
+
+        return createBinaryOperation(ctx);
+    }
 //
 //    @Override
 //    public Expression visitPower(FormulasParser.PowerContext ctx) {

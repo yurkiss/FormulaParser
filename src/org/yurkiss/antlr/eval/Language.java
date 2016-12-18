@@ -20,12 +20,14 @@
  */
 package org.yurkiss.antlr.eval;
 
+import org.yurkiss.antlr.eval.functions.If;
+import org.yurkiss.antlr.eval.functions.NumericFunction;
+import org.yurkiss.antlr.eval.functions.Or;
 import org.yurkiss.antlr.eval.functions.Sum;
-import org.yurkiss.antlr.eval.operators.Adder;
-import org.yurkiss.antlr.eval.operators.Divider;
-import org.yurkiss.antlr.eval.operators.Multiplier;
-import org.yurkiss.antlr.eval.operators.Subtracter;
+import org.yurkiss.antlr.eval.operators.*;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,12 +71,15 @@ public class Language {
 
         List<Class<? extends BinaryOperator>> binClasses =
                 Arrays.asList(
-                        Adder.class, Subtracter.class, Multiplier.class, Divider.class
+                        Adder.class, Subtracter.class, Multiplier.class, Divider.class,
+                        LessThan.class, GreaterThan.class, GreaterThanOrEqual.class, LessThanOrEqual.class,
+                        Equal.class, NotEqual.class,
+                        Exponentiator.class
                 );
 
         List<Class<? extends Function>> funcClasses =
                 Arrays.asList(
-                        Sum.class
+                        Sum.class, If.class, Or.class
                 );
 
         try {
@@ -91,55 +96,11 @@ public class Language {
             e.printStackTrace();
         }
 
-
-//		// Loads properties
-//		Properties language = new Properties();
-//		InputStream stream = CleanSheets.class.getResourceAsStream(PROPERTIES_FILENAME);
-//		if (stream != null) {
-//			try {
-//				language.load(stream);
-//			} catch (IOException e) {
-//				System.err.println("An I/O error occurred when loading language"
-//					+ " properties file (" + PROPERTIES_FILENAME + ").");
-//				return;
-//			} finally {
-//				try {
-//					if (stream != null)
-//						stream.close();
-//				} catch (IOException e) {}
-//			}
-//
-//			// Loads elements
-//			for (Object className : language.keySet()) {
-//				// Loads class and instantiates element
-//				Class elementClass;
-//				Object element;
-//				try {
-//					elementClass = Class.forName(getClass().getPackage()
-//						.getName() + "." + (String)className);
-//					element = elementClass.newInstance();
-//				} catch (Exception e) {
-//					// Skip this element, regardless of what went wrong
-//					continue;
-//				}
-//
-//				// Stores element
-//				if (Function.class.isAssignableFrom(elementClass))
-//					functions.add(Function.class.cast(element));
-//				if (BinaryOperator.class.isAssignableFrom(elementClass))
-//					binaryOperators.add(BinaryOperator.class.cast(element));
-//				if (UnaryOperator.class.isAssignableFrom(elementClass))
-//					unaryOperators.add(UnaryOperator.class.cast(element));
-//			}
-//		} else
-//			System.err.println("Could not find language properties file ("
-//				+ PROPERTIES_FILENAME + ").");
-//
-//		// Loads static methods from java.lang.Math that use double precision
-//		for (Method method : Math.class.getMethods())
-//			if (Modifier.isStatic(method.getModifiers()) &&
-//						method.getReturnType() == Double.TYPE)
-//				functions.add(new NumericFunction(method));
+		// Loads static methods from java.lang.Math that use double precision
+		for (Method method : Math.class.getMethods())
+			if (Modifier.isStatic(method.getModifiers()) &&
+						method.getReturnType() == Double.TYPE)
+				functions.add(new NumericFunction(method));
     }
 
     /**

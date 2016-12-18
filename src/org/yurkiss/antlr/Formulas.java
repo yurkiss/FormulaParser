@@ -17,7 +17,8 @@ import java.io.StringReader;
 public class Formulas {
     public static void main(String[] args) throws IOException {
 
-        String s = "4 / 2 + Sum(1,2,4)";
+//        String s = "4 / 2 + Sum(1,2,4)";
+        String s = "IF(1 = 2, 3, 4) + 1";
         ANTLRInputStream input = new ANTLRInputStream(new StringReader(s));
         FormulasLexer lexer = new FormulasLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
