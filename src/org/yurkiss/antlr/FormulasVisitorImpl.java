@@ -6,6 +6,8 @@ import org.yurkiss.antlr.formulas.FormulasBaseVisitor;
 import org.yurkiss.antlr.formulas.FormulasParser;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yurkiss on 12/16/16.
@@ -19,24 +21,20 @@ public class FormulasVisitorImpl extends FormulasBaseVisitor<Expression> {
 
     @Override
     public Expression visitLiter(FormulasParser.LiterContext ctx) {
-//        System.out.println(ctx.literal().getText());
 
-        if (ctx.literal().NUMBER() != null) {
-            try {
+        try {
+            if (ctx.literal().NUMBER() != null) {
                 return new Literal(Value.parseNumericValue(ctx.getText()));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            } else if (ctx.literal().STRING() != null) {
+                return new Literal(Value.parseValue(ctx.getText(), Value.Type.BOOLEAN, Value.Type.DATE));
             }
-
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
         return new Literal(Value.parseValue(ctx.getText(), Value.Type.NUMERIC, Value.Type.BOOLEAN, Value.Type.DATE));
     }
 
-    //    @Override
-//    public Expression visitMulDiv(FormulasParser.MulDivContext ctx) {
-////        return super.visitMulDiv(ctx);
-//    }
-//
     @Override
     public Expression visitAddSub(FormulasParser.AddSubContext ctx) {
         return createBinaryOperation(ctx);
@@ -80,10 +78,31 @@ public class FormulasVisitorImpl extends FormulasBaseVisitor<Expression> {
 ////        return super.visitComparisonOR(ctx);
 //    }
 //
-//    @Override
-//    public Expression visitFunctionCall(FormulasParser.FunctionCallContext ctx) {
-////        return super.visitFunctionCall(ctx);
-//    }
+    @Override
+    public Expression visitFunctionCall(FormulasParser.FunctionCallContext ctx) {
+        // Convert function call
+        Function function = null;
+        try {
+            function = Language.getInstance().getFunction(ctx.function().IDENTIFIER().getText());
+        } catch (UnknownElementException e) {
+        }
+
+        if (function != null) {
+            List<Expression> args = new ArrayList<>();
+            for (FormulasParser.ExprContext context : ctx.function().expr()) {
+                args.add(visit(context));
+            }
+
+            Expression[] argArray = args.toArray(new Expression[args.size()]);
+            try {
+                return new FunctionCall(function, argArray);
+            } catch (IllegalFunctionCallException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
 //
 //    @Override
 //    public Expression visitComparisonEquals(FormulasParser.ComparisonEqualsContext ctx) {
