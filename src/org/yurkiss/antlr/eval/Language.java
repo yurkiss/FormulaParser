@@ -73,7 +73,7 @@ public class Language {
                 Arrays.asList(
                         Adder.class, Subtracter.class, Multiplier.class, Divider.class,
                         LessThan.class, GreaterThan.class, GreaterThanOrEqual.class, LessThanOrEqual.class,
-                        Equal.class, NotEqual.class,
+                        Equal.class, Equal2.class, NotEqual.class,
                         Exponentiator.class
                 );
 
