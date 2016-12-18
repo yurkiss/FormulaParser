@@ -1,11 +1,13 @@
 grammar Formulas;
 
-expr: expr AMP expr                         # Concatenation
+
+expr: (MINUS) expr                              # Unar
+    | expr AMP expr                         # Concatenation
     | expr POWER expr                       # Power
     | expr op=(MUL|DIV) expr                # MulDiv
-    | expr op=(ADD|SUB) expr                # AddSub
-    | expr ( GT | LT | LTEQ | GTEQ ) expr   # Comparison
-    | expr ( EQ | NEQ ) expr                # ComparisonEquals
+    | expr op=(ADD|MINUS) expr                # AddSub
+    | expr op=( GT | LT | LTEQ | GTEQ ) expr   # Comparison
+    | expr op=( EQ | NEQ ) expr                # ComparisonEquals
     | expr ( AND_OP ) expr                  # ComparisonAnd
     | expr ( OR_OP) expr                    # ComparisonOR
     | function                              # FunctionCall
@@ -41,16 +43,16 @@ STRING
 QUOT: '"';
 
 /* Numeric literals */
-NUMBER: (MINUS)? ( DIGIT )+ ( DOT ( DIGIT )+ )? ;
+NUMBER: ( DIGIT )+ ( DOT ( DIGIT )+ )? ;
 DIGIT : [0-9]+ ;
-MINUS	: '-' ;
+//MINUS	: '-' ;
 
 /* Text operators */
 AMP		: '&' ;
 
 /* Arithmetic operators */
 ADD	    : '+' ;
-SUB	    : '-' ;
+MINUS	    : '-' ;
 MUL	    : '*' ;
 DIV		: '/' ;
 POWER	: '^' ;

@@ -21,32 +21,40 @@
 package org.yurkiss.antlr.eval.operators;
 
 
-import org.yurkiss.antlr.eval.BinaryOperator;
 import org.yurkiss.antlr.eval.Expression;
 import org.yurkiss.antlr.eval.IllegalValueTypeException;
+import org.yurkiss.antlr.eval.UnaryOperator;
 import org.yurkiss.antlr.eval.Value;
 
 /**
- * A multiplier.
+ * A negator (negative sign).
  * @author Einar Pehrson
  */
-public class Multiplier implements BinaryOperator {
+public class Negator implements UnaryOperator {
 
 	/** The unique version identifier used for serialization */
-	private static final long serialVersionUID = 5634816939414241509L;
+	private static final long serialVersionUID = 1008038195417799885L;
 
 	/**
-	 * Creates a new multiplier.
+	 * Creates a new negator.
 	 */
-	public Multiplier() {}
+	public Negator() {}
 
-	public Value applyTo(Expression leftOperand, Expression rightOperand) throws IllegalValueTypeException {
-		return new Value(leftOperand.evaluate().toDouble()
-				* rightOperand.evaluate().toDouble());
+	/**
+	 * Returns the negation of the operand's value.
+	 * @return the negation of the operand's value
+	 * @throws IllegalValueTypeException if the value of the operand is not numeric
+	 */
+	public Value applyTo(Expression operand) throws IllegalValueTypeException {
+		return new Value(-operand.evaluate().toNumber().doubleValue());
 	}
 
 	public String getIdentifier() {
-		return "*";
+		return "-";
+	}
+
+	public boolean isPrefix() {
+		return true;
 	}
 
 	public Value.Type getOperandValueType() {

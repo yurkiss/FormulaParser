@@ -20,34 +20,78 @@
  */
 package org.yurkiss.antlr.eval;
 
+import org.yurkiss.antlr.eval.functions.Sum;
+import org.yurkiss.antlr.eval.operators.Adder;
+import org.yurkiss.antlr.eval.operators.Divider;
+import org.yurkiss.antlr.eval.operators.Multiplier;
+import org.yurkiss.antlr.eval.operators.Subtracter;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * A factory for creating certain types of language elements.
+ *
  * @author Einar Pehrson
  */
 public class Language {
 
-	/** The singleton instance */
-	private static final Language instance = new Language();
+    /**
+     * The singleton instance
+     */
+    private static final Language instance = new Language();
 
-	/** The name of the file in which language properties are stored */
-	private static final String PROPERTIES_FILENAME = "res/language.props";
+    /**
+     * The name of the file in which language properties are stored
+     */
+    private static final String PROPERTIES_FILENAME = "res/language.props";
 
-	/** The unary operators that are supported by the language */
-//	private List<UnaryOperator> unaryOperators = new ArrayList<UnaryOperator>();
+    /**
+     * The unary operators that are supported by the language
+     */
+    private List<UnaryOperator> unaryOperators = new ArrayList<UnaryOperator>();
 
-	/** The binary operators that are supported by the language */
-	private List<BinaryOperator> binaryOperators = new ArrayList<BinaryOperator>();
+    /**
+     * The binary operators that are supported by the language
+     */
+    private List<BinaryOperator> binaryOperators = new ArrayList<BinaryOperator>();
 
-	/** The functions that are supported by the language */
-	private List<Function> functions = new ArrayList<Function>();
+    /**
+     * The functions that are supported by the language
+     */
+    private List<Function> functions = new ArrayList<Function>();
 
-	/**
-	 * Creates a new language.
-	 */
-	private Language() {
+    /**
+     * Creates a new language.
+     */
+    private Language() {
+
+        List<Class<? extends BinaryOperator>> binClasses =
+                Arrays.asList(
+                        Adder.class, Subtracter.class, Multiplier.class, Divider.class
+                );
+
+        List<Class<? extends Function>> funcClasses =
+                Arrays.asList(
+                        Sum.class
+                );
+
+        try {
+            for (Class<? extends BinaryOperator> clazz : binClasses) {
+                BinaryOperator instance = clazz.newInstance();
+                binaryOperators.add(instance);
+            }
+
+            for (Class<? extends Function> clazz : funcClasses) {
+                Function instance = clazz.newInstance();
+                functions.add(instance);
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
 //		// Loads properties
 //		Properties language = new Properties();
 //		InputStream stream = CleanSheets.class.getResourceAsStream(PROPERTIES_FILENAME);
@@ -96,20 +140,22 @@ public class Language {
 //			if (Modifier.isStatic(method.getModifiers()) &&
 //						method.getReturnType() == Double.TYPE)
 //				functions.add(new NumericFunction(method));
-	}
+    }
 
-	/**
-	 * Returns the singleton instance.
-	 * @return the singleton instance
-	 */
-	public static Language getInstance() {
-		return instance;
-	}
+    /**
+     * Returns the singleton instance.
+     *
+     * @return the singleton instance
+     */
 
-	/**
-	 * Returns the unary operator with the given identifier.
-	 * @return the unary operator with the given identifier
-	 */
+    public static Language getInstance() {
+        return instance;
+    }
+
+    /**
+     * Returns the unary operator with the given identifier.
+     * @return the unary operator with the given identifier
+     */
 //	public UnaryOperator getUnaryOperator(String identifier) throws UnknownElementException {
 //		for (UnaryOperator operator : unaryOperators)
 //			if (identifier.equalsIgnoreCase(operator.getIdentifier()))
@@ -117,45 +163,49 @@ public class Language {
 //		throw new UnknownElementException(identifier);
 //	}
 
-	/**
-	 * Returns the binary operator with the given identifier.
-	 * @return the binary operator with the given identifier
-	 */
-	public BinaryOperator getBinaryOperator(String identifier) throws UnknownElementException {
-		for (BinaryOperator operator : binaryOperators)
-			if (identifier.equalsIgnoreCase(operator.getIdentifier()))
-				return operator; // .clone()
-		throw new UnknownElementException(identifier);
-	}
+    /**
+     * Returns the binary operator with the given identifier.
+     *
+     * @return the binary operator with the given identifier
+     */
+    public BinaryOperator getBinaryOperator(String identifier) throws UnknownElementException {
+        for (BinaryOperator operator : binaryOperators)
+            if (identifier.equalsIgnoreCase(operator.getIdentifier()))
+                return operator; // .clone()
+        throw new UnknownElementException(identifier);
+    }
 
-	/**
-	 * Returns the function with the given identifier.
-	 * @return the function with the given identifier
-	 */
-	public Function getFunction(String identifier) throws UnknownElementException {
-		for (Function function : functions)
-			if (identifier.equalsIgnoreCase(function.getIdentifier()))
-				return function; // .clone()
-		throw new UnknownElementException(identifier);
-	}
+    /**
+     * Returns the function with the given identifier.
+     *
+     * @return the function with the given identifier
+     */
+    public Function getFunction(String identifier) throws UnknownElementException {
+        for (Function function : functions)
+            if (identifier.equalsIgnoreCase(function.getIdentifier()))
+                return function; // .clone()
+        throw new UnknownElementException(identifier);
+    }
 
-	/**
-	 * Returns whether there is a function with the given identifier.
-	 * @return whether there is a function with the given identifier
-	 */
-	public boolean hasFunction(String identifier) {
-		try {
-			return getFunction(identifier) != null;
-		} catch (UnknownElementException e) {
-			return false;
-		}
-	}
+    /**
+     * Returns whether there is a function with the given identifier.
+     *
+     * @return whether there is a function with the given identifier
+     */
+    public boolean hasFunction(String identifier) {
+        try {
+            return getFunction(identifier) != null;
+        } catch (UnknownElementException e) {
+            return false;
+        }
+    }
 
-	/**
-	 * Returns the functions that are supported by the syntax.
-	 * @return the functions that are supported by the syntax
-	 */
-	public Function[] getFunctions() {
-		return functions.toArray(new Function[functions.size()]);
-	}
+    /**
+     * Returns the functions that are supported by the syntax.
+     *
+     * @return the functions that are supported by the syntax
+     */
+    public Function[] getFunctions() {
+        return functions.toArray(new Function[functions.size()]);
+    }
 }
